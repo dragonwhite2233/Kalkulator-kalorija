@@ -1,79 +1,82 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <title>Kalorijski kalkulator</title>
+<meta charset="UTF-8">
+<title>Kalorijski kalkulator + Igrica</title>
 
-  <!-- BARCODE LIBRARY -->
-  <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.js"></script>
+<script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.js"></script>
 
-  <style>
-    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+<style>
+* { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #43cea2, #185a9d);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .page {
-      display: none;
-      width: 380px;
-      padding: 25px;
-      border-radius: 18px;
-      background: #fff;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-      text-align: center;
-    }
+.page {
+  display: none;
+  width: 380px;
+  padding: 25px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  text-align: center;
+}
 
-    h1, h2 { margin-bottom: 10px; }
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: left;
+}
 
-    label {
-      display: block;
-      margin-top: 10px;
-      font-size: 14px;
-      text-align: left;
-    }
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
 
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #185a9d;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: #185a9d;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+button:hover { background: #144a82; }
 
-    button:hover { background: #144a82; }
+.result {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f4f6f8;
+  border-radius: 10px;
+  white-space: pre-line;
+}
 
-    .result {
-      margin-top: 15px;
-      padding: 12px;
-      background: #f4f6f8;
-      border-radius: 10px;
-      white-space: pre-line;
-    }
+#scanner video {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
+}
 
-    #scanner video {
-      width: 100%;
-      border-radius: 12px;
-      margin-top: 10px;
-    }
-  </style>
+canvas {
+  background: #f4f6f8;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+</style>
 </head>
 
 <body>
@@ -89,9 +92,10 @@
   <h2>Odaberi opciju</h2>
   <button onclick="openFood()">🥗 Kalorije u hrani</button>
   <button onclick="openPerson()">🧍‍♂️ Kalorije za osobu</button>
+  <button onclick="openGame()">🎮 Igraj igricu</button>
 </div>
 
-<!-- PERSON CALCULATOR -->
+<!-- PERSON -->
 <div class="page" id="personPage">
   <h2>Kalorije za osobu</h2>
 
@@ -119,31 +123,36 @@
   </select>
 
   <button onclick="calculatePerson()">Izračunaj</button>
-
   <div class="result" id="personResult"></div>
   <button onclick="goMenu()">⬅ Nazad</button>
 </div>
 
-<!-- FOOD + BARCODE -->
+<!-- FOOD -->
 <div class="page" id="foodPage">
   <h2>Kalorije u hrani</h2>
 
   <button onclick="startScanner()">📷 Skeniraj barkod</button>
-
   <div id="scanner"></div>
 
   <label>Proizvod</label>
-  <input type="text" id="productName" readonly>
+  <input id="productName" readonly>
 
   <label>Kalorije (100g)</label>
-  <input type="number" id="kcal100" readonly>
+  <input id="kcal100" readonly>
 
   <label>Količina (g)</label>
-  <input type="number" id="grams">
+  <input id="grams">
 
   <button onclick="calculateFood()">Izračunaj</button>
-
   <div class="result" id="foodResult"></div>
+  <button onclick="goMenu()">⬅ Nazad</button>
+</div>
+
+<!-- GAME -->
+<div class="page" id="gamePage">
+  <h2>🦖 Kalorijski Dino</h2>
+  <canvas id="game" width="320" height="200"></canvas>
+  <div class="result" id="gameResult">SPACE ili tap za skok</div>
   <button onclick="goMenu()">⬅ Nazad</button>
 </div>
 
@@ -157,33 +166,29 @@ function goMenu() {
   document.getElementById("menuPage").style.display = "block";
 }
 
+/* PERSON */
 function openPerson() {
   hideAll();
   document.getElementById("personPage").style.display = "block";
 }
 
-function openFood() {
-  hideAll();
-  document.getElementById("foodPage").style.display = "block";
-}
-
 function calculatePerson() {
-  var g = gender.value;
-  var a = +age.value;
-  var h = +height.value;
-  var w = +weight.value;
-  var act = +activity.value;
+  let g = gender.value;
+  let a = +age.value;
+  let h = +height.value;
+  let w = +weight.value;
+  let act = +activity.value;
 
   if (!a || !h || !w) {
     personResult.innerText = "Unesi sve podatke.";
     return;
   }
 
-  var bmr = g === "male"
-    ? (10*w + 6.25*h - 5*a + 5)
-    : (10*w + 6.25*h - 5*a - 161);
+  let bmr = g === "male"
+    ? 10*w + 6.25*h - 5*a + 5
+    : 10*w + 6.25*h - 5*a - 161;
 
-  var tdee = Math.round(bmr * act);
+  let tdee = Math.round(bmr * act);
 
   personResult.innerText =
     "🔥 Održavanje: " + tdee + " kcal\n" +
@@ -191,24 +196,29 @@ function calculatePerson() {
     "⬆️ Masa: " + (tdee + 300) + " kcal";
 }
 
-/* BARCODE */
+/* FOOD */
+function openFood() {
+  hideAll();
+  document.getElementById("foodPage").style.display = "block";
+}
+
+let scanned = false;
+
 function startScanner() {
+  scanned = false;
   document.getElementById("scanner").innerHTML = "";
+
   Quagga.init({
-    inputStream: {
-      type: "LiveStream",
-      target: document.querySelector("#scanner"),
-      constraints: { facingMode: "environment" }
-    },
-    decoder: {
-      readers: ["ean_reader", "ean_8_reader", "upc_reader"]
-    }
+    inputStream: { type: "LiveStream", target: "#scanner", constraints: { facingMode: "environment" }},
+    decoder: { readers: ["ean_reader","ean_8_reader","upc_reader"] }
   }, err => {
     if (err) return alert("Greška s kamerom");
     Quagga.start();
   });
 
   Quagga.onDetected(data => {
+    if (scanned) return;
+    scanned = true;
     Quagga.stop();
     fetchProduct(data.codeResult.code);
   });
@@ -216,37 +226,88 @@ function startScanner() {
 
 function fetchProduct(code) {
   fetch("https://world.openfoodfacts.org/api/v0/product/" + code + ".json")
-    .then(res => res.json())
-    .then(data => {
-      if (data.status !== 1) {
+    .then(r => r.json())
+    .then(d => {
+      if (d.status !== 1) {
         foodResult.innerText = "Proizvod nije pronađen.";
         return;
       }
 
-      var p = data.product;
-      var kcal = p.nutriments["energy-kcal_100g"];
+      let p = d.product;
+      let kcal = p.nutriments["energy-kcal_100g"] ||
+                 (p.nutriments["energy_100g"] / 4.184);
 
-      productName.value = p.product_name || "Nepoznat proizvod";
-      kcal100.value = kcal || "";
-
-      if (!kcal) {
-        foodResult.innerText = "Nema podataka o kalorijama.";
-      }
+      productName.value = p.product_name || "Nepoznat";
+      kcal100.value = kcal ? Math.round(kcal) : "";
     });
 }
 
 function calculateFood() {
-  var kcal = +kcal100.value;
-  var g = +grams.value;
-
+  let kcal = +kcal100.value;
+  let g = +grams.value;
   if (!kcal || !g) {
     foodResult.innerText = "Unesi količinu.";
     return;
   }
-
   foodResult.innerText =
     "🔥 Ukupno kalorija: " + Math.round(kcal / 100 * g) + " kcal";
 }
+
+/* GAME */
+let canvas, ctx, dino, obstacle, gravity = 0.6, score, playing;
+
+function openGame() {
+  hideAll();
+  document.getElementById("gamePage").style.display = "block";
+  startGame();
+}
+
+function startGame() {
+  canvas = document.getElementById("game");
+  ctx = canvas.getContext("2d");
+  dino = { x: 40, y: 150, w: 20, h: 20, vy: 0 };
+  obstacle = { x: 320, y: 160, w: 15, h: 30 };
+  score = 0;
+  playing = true;
+  requestAnimationFrame(loop);
+}
+
+function loop() {
+  if (!playing) return;
+  ctx.clearRect(0,0,320,200);
+
+  ctx.fillRect(0,180,320,2);
+
+  dino.vy += gravity;
+  dino.y += dino.vy;
+  if (dino.y > 150) { dino.y = 150; dino.vy = 0; }
+  ctx.fillStyle = "#43cea2";
+  ctx.fillRect(dino.x,dino.y,dino.w,dino.h);
+
+  obstacle.x -= 4;
+  if (obstacle.x < -20) { obstacle.x = 320; score++; }
+  ctx.fillStyle = "#e74c3c";
+  ctx.fillRect(obstacle.x,obstacle.y,obstacle.w,obstacle.h);
+
+  if (dino.x < obstacle.x + obstacle.w &&
+      dino.x + dino.w > obstacle.x &&
+      dino.y < obstacle.y + obstacle.h &&
+      dino.y + dino.h > obstacle.y) {
+    playing = false;
+    gameResult.innerText = "💥 Game Over | Score: " + score;
+  }
+
+  ctx.fillStyle = "#000";
+  ctx.fillText("Score: " + score, 10, 20);
+  requestAnimationFrame(loop);
+}
+
+function jump() {
+  if (dino.y >= 150) dino.vy = -10;
+}
+
+document.addEventListener("keydown", e => e.code==="Space" && jump());
+document.getElementById("game").addEventListener("click", jump);
 </script>
 
 </body>
