@@ -9,20 +9,18 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80');
-    background-size: cover;
+    background: #111;
     color: white;
 }
 
 header {
     text-align: center;
-    padding: 30px;
-    background: rgba(0,0,0,0.7);
+    padding: 20px;
+    background: black;
 }
 
 .container {
-    padding: 30px;
+    padding: 20px;
 }
 
 .products {
@@ -34,8 +32,8 @@ header {
 .product {
     background: white;
     color: black;
-    border-radius: 10px;
     padding: 15px;
+    border-radius: 10px;
     text-align: center;
 }
 
@@ -43,14 +41,13 @@ header {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-radius: 5px;
 }
 
 button {
+    padding: 8px 15px;
     background: green;
     color: white;
     border: none;
-    padding: 10px;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -60,31 +57,36 @@ button:hover {
 }
 
 .cart, .checkout {
-    background: rgba(255,255,255,0.95);
+    background: white;
     color: black;
     padding: 20px;
-    margin-top: 30px;
+    margin-top: 20px;
     border-radius: 10px;
 }
 
 input, textarea {
     width: 100%;
     padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .total {
     font-weight: bold;
     color: green;
 }
+
+.success {
+    color: green;
+    font-weight: bold;
+    margin-top: 15px;
+}
 </style>
 </head>
 <body>
 
 <header>
-    <h1>Prodaja S&D</h1>
-    <p>Online prodaja odjeće i alata</p>
+<h1>Prodaja S&D</h1>
+<p>Online prodaja odjeće i alata</p>
 </header>
 
 <div class="container">
@@ -92,34 +94,34 @@ input, textarea {
 <div class="products">
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=800&q=80">
+<img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=800&q=80" alt="Majica">
 <h3>Muška Majica</h3>
 <p>25 KM</p>
-<button onclick="addToCart('Muška Majica',25)">Dodaj u korpu</button>
+<button type="button" onclick="addToCart('Muška Majica',25)">Dodaj u korpu</button>
 </div>
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=800&q=80">
+<img src="https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=800&q=80" alt="Busilica">
 <h3>Parkside Bušilica</h3>
 <p>120 KM</p>
-<button onclick="addToCart('Parkside Bušilica',120)">Dodaj u korpu</button>
+<button type="button" onclick="addToCart('Parkside Bušilica',120)">Dodaj u korpu</button>
 </div>
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1581092334394-8981b1a89f3b?auto=format&fit=crop&w=800&q=80">
+<img src="https://images.unsplash.com/photo-1581092334394-8981b1a89f3b?auto=format&fit=crop&w=800&q=80" alt="Šrafciger">
 <h3>Set Šrafcigera</h3>
 <p>35 KM</p>
-<button onclick="addToCart('Set Šrafcigera',35)">Dodaj u korpu</button>
+<button type="button" onclick="addToCart('Set Šrafcigera',35)">Dodaj u korpu</button>
 </div>
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80">
+<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80" alt="Gedore">
 <h3>Set Gedora</h3>
 <p>80 KM</p>
-<button onclick="addToCart('Set Gedora',80)">Dodaj u korpu</button>
+<button type="button" onclick="addToCart('Set Gedora',80)">Dodaj u korpu</button>
 </div>
 
-</div>
+</div> <!-- products end -->
 
 <div class="cart">
 <h2>Korpa</h2>
@@ -130,7 +132,7 @@ input, textarea {
 <div class="checkout">
 <h2>Narudžba</h2>
 
-<form action="https://formspree.io/f/maqdqlzy" method="POST">
+<form id="orderForm" action="https://formspree.io/f/maqdqlzy" method="POST">
 
 <input type="hidden" name="narudzba" id="hiddenOrder">
 
@@ -143,12 +145,17 @@ input, textarea {
 <label>Adresa:</label>
 <textarea name="adresa" required></textarea>
 
-<button type="submit" onclick="prepareOrder()">Naruči</button>
+<button type="submit">Naruči</button>
 
 </form>
-</div>
+
+<p id="successMessage" class="success" style="display:none;">
+✔ Narudžba je uspješno poslana!
+</p>
 
 </div>
+
+</div> <!-- container end -->
 
 <script>
 let cart = [];
@@ -161,24 +168,37 @@ function addToCart(name, price) {
 }
 
 function updateCart() {
-    let list = document.getElementById("cartItems");
+    const list = document.getElementById("cartItems");
     list.innerHTML = "";
+
     cart.forEach(item => {
         let li = document.createElement("li");
         li.textContent = item.name + " - " + item.price + " KM";
         list.appendChild(li);
     });
+
     document.getElementById("totalPrice").innerText = total;
 }
 
-function prepareOrder() {
+document.getElementById("orderForm").addEventListener("submit", function(e){
+
+    if(cart.length === 0){
+        alert("Korpa je prazna!");
+        e.preventDefault();
+        return;
+    }
+
     let orderText = "";
     cart.forEach(item => {
         orderText += item.name + " - " + item.price + " KM\n";
     });
     orderText += "\nUkupno: " + total + " KM";
     document.getElementById("hiddenOrder").value = orderText;
-}
+
+    setTimeout(() => {
+        document.getElementById("successMessage").style.display = "block";
+    }, 100);
+});
 </script>
 
 </body>
