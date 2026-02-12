@@ -35,6 +35,12 @@ header {
     padding: 15px;
     border-radius: 10px;
     text-align: center;
+    transition: 0.3s;
+}
+
+.product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 .product img {
@@ -94,34 +100,64 @@ input, textarea {
 <div class="products">
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=800&q=80" alt="Majica">
+<img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=800&q=80">
 <h3>Muška Majica</h3>
 <p>25 KM</p>
-<button type="button" onclick="addToCart('Muška Majica',25)">Dodaj u korpu</button>
+<button onclick="addToCart('Muška Majica',25)">Dodaj u korpu</button>
 </div>
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=800&q=80" alt="Busilica">
+<img src="https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=800&q=80">
 <h3>Parkside Bušilica</h3>
 <p>120 KM</p>
-<button type="button" onclick="addToCart('Parkside Bušilica',120)">Dodaj u korpu</button>
+<button onclick="addToCart('Parkside Bušilica',120)">Dodaj u korpu</button>
 </div>
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1581092334394-8981b1a89f3b?auto=format&fit=crop&w=800&q=80" alt="Šrafciger">
+<img src="https://images.unsplash.com/photo-1581092334394-8981b1a89f3b?auto=format&fit=crop&w=800&q=80">
 <h3>Set Šrafcigera</h3>
 <p>35 KM</p>
-<button type="button" onclick="addToCart('Set Šrafcigera',35)">Dodaj u korpu</button>
+<button onclick="addToCart('Set Šrafcigera',35)">Dodaj u korpu</button>
 </div>
 
 <div class="product">
-<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80" alt="Gedore">
+<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80">
 <h3>Set Gedora</h3>
 <p>80 KM</p>
-<button type="button" onclick="addToCart('Set Gedora',80)">Dodaj u korpu</button>
+<button onclick="addToCart('Set Gedora',80)">Dodaj u korpu</button>
 </div>
 
-</div> <!-- products end -->
+<!-- NOVI PROIZVODI -->
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1593032465171-8f1e0f5a6c63?auto=format&fit=crop&w=800&q=80">
+<h3>Radne Rukavice</h3>
+<p>15 KM</p>
+<button onclick="addToCart('Radne Rukavice',15)">Dodaj u korpu</button>
+</div>
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1616628182501-1c3c2de3c8a3?auto=format&fit=crop&w=800&q=80">
+<h3>Sportska Dukserica</h3>
+<p>60 KM</p>
+<button onclick="addToCart('Sportska Dukserica',60)">Dodaj u korpu</button>
+</div>
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=800&q=80">
+<h3>Radna Lampa</h3>
+<p>45 KM</p>
+<button onclick="addToCart('Radna Lampa',45)">Dodaj u korpu</button>
+</div>
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80">
+<h3>Trenerka Komplet</h3>
+<p>90 KM</p>
+<button onclick="addToCart('Trenerka Komplet',90)">Dodaj u korpu</button>
+</div>
+
+</div>
 
 <div class="cart">
 <h2>Korpa</h2>
@@ -139,8 +175,8 @@ input, textarea {
 <label>Ime i prezime:</label>
 <input type="text" name="ime" required>
 
-<label>Email:</label>
-<input type="email" name="email" required>
+<label>Broj telefona:</label>
+<input type="tel" name="telefon" pattern="[0-9+ ]{6,15}" placeholder="+387 61 123 456" required>
 
 <label>Adresa:</label>
 <textarea name="adresa" required></textarea>
@@ -155,7 +191,7 @@ input, textarea {
 
 </div>
 
-</div> <!-- container end -->
+</div>
 
 <script>
 let cart = [];
